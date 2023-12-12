@@ -6,10 +6,11 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Scanner;
 
-import entities.Department;
-import entities.HourContract;
-import entities.Worker;
-import entities.enums.WorkerLevel;
+import entities.Client;
+import entities.Order;
+import entities.OrderItem;
+import entities.Product;
+import entities.enums.OrderStatus;
 
 public class Program {
 
@@ -17,48 +18,46 @@ public class Program {
 
 		Locale.setDefault(Locale.US);
 		Scanner sc = new Scanner (System.in);
+		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		
-		//DATA OF THE WORKER
-		System.out.print("Enter department's name: ");
-		String departmentName =sc.nextLine();
-		System.out.println("Enter worker data: ");
-		System.out.println("Name: ");
-		String workerName = sc.nextLine();
-		System.out.println("Level: ");
-		String workerLevel = sc.nextLine();
-		System.out.println("Name: ");
-		double baseSalary = sc.nextDouble();
-		Worker worker = new Worker(workerName, WorkerLevel.valueOf(workerLevel), baseSalary, new Department(departmentName));
+		System.out.println("Enter the client data: ");
+		System.out.print("Name: ");
+		String name = sc.nextLine();
+		System.out.print("Email: ");
+		String email = sc.nextLine();
+		System.out.print("Birth date (DD/MM/YYYY): ");
+		Date birthDate = sdf.parse(sc.next());
+		Client client = new Client(name, email, birthDate);
 		
 		
-		//CONTRACTS
-		System.out.print("How many contarcts to this worker? ");
-		int n = sc.nextInt();
+		System.out.println("Enter order data:");
+		System.out.print("Status: ");
+		OrderStatus status = OrderStatus.valueOf(sc.next());
+		Order order = new Order(new Date(), status, client);
 		
-		for ( int i = 1 ; i <= n ; i++) {
-			System.out.println("Enter contract #" + i + "data");
-			System.out.print("Date (DD/MM/YYYY): ");
-			Date contractDate = sdf.parse(sc.next());
-			System.out.print("Value per hour: ");
-			double valuePerHour = sc.nextDouble();
-			System.out.print("Duration (hours): ");
-			int hours = sc.nextInt();
-			HourContract contract = new HourContract(contractDate, valuePerHour, hours);
-			worker.addContract(contract);
+		System.out.print("How many items to this order? ");
+		int items = sc.nextInt();
+		for ( int i = 0 ; i < items ; i ++) {
+			sc.nextLine();
+			System.out.println("Enter #" + (i + 1) + " item data");
+			System.out.print("Product name: ");
+			String productName = sc.nextLine();
+			System.out.print("Product price: ");
+			double price = sc.nextDouble();
+			Product product = new Product(productName, price);
+			
+			System.out.print("Quantity: ");
+			int quantity = sc.nextInt();
+			OrderItem orderItem = new OrderItem(quantity, price, product);
+			order.addItem(orderItem);
 		}
 		
-		//INCOME
-		System.out.print("Enter month and year to calculate income (MM/YYYY): ");
-		String monthAndYear = sc.next();
-		int month = Integer.parseInt(monthAndYear.substring(0, 2));
-		int year = Integer.parseInt(monthAndYear.substring(3));
-		System.out.println("Name: " + worker.getName());
-		System.out.println("Department: " + worker.getDepartment().getName());
-		System.out.println("Income for " + monthAndYear + ": " + String.format("%.2f", worker.income(year, month)));
+		System.out.println();
+		System.out.println("ORDER SUMARY");
+		System.out.println(order);
 		
-
 		sc.close();
 	}
- 
+	
 }
